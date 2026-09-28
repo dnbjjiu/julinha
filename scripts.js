@@ -1,7 +1,7 @@
 'use strict';
 // PERSONALIZE AQUI: troque textos, opções e destinos sem alterar o fluxo.
 const CONFIG = {
-  whatsapp: '556896147080',
+  whatsapp: '55689928361',
   // Cole abaixo o endereço completo da surpresa (ex.: https://seusite.com).
   // Enquanto vazio, o card Prossiga aparece indisponível.
   linkProssiga: 'https://music.youtube.com/watch?v=izGwDsrQ1eQ',
