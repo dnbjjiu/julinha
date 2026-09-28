@@ -1,15 +1,15 @@
 'use strict';
 // PERSONALIZE AQUI: troque textos, opções e destinos sem alterar o fluxo.
 const CONFIG = {
-  whatsapp: '5568992575708',
+  whatsapp: '556896147080',
   // Cole abaixo o endereço completo da surpresa (ex.: https://seusite.com).
   // Enquanto vazio, o card Prossiga aparece indisponível.
   linkProssiga: 'https://music.youtube.com/watch?v=izGwDsrQ1eQ',
   // TROCAS FUTURAS DE COMIDAS / RESTAURANTES: [emoji, nome].
-  comidas: [['🍔','Hambúrguer'],['🍣','Sushi'],['🍝','Massas'],['🌮','Tacos'],['🍕','Pizza']],
+  comidas: [['🍔','Hambúrguer'],['🍣','Sushi'],['🍝','Massas'],['🍦','Sorvete'],['🍕','Pizza'],['🍻','Cerva']],
   // TROCAS FUTURAS DE ATIVIDADES / LUGARES: [emoji, nome].
-  atividades: [['⛳','Golfe'],['🚶','Caminhada'],['🎬','Cinema'],['💃','Dança'],['🎡','Parque'],['🏖️','Praia']],
-  provocacoes: ['Tem certeza, gatinha? 🥺','Pensa com carinho, meu bem…','- com - é +','Aparentemente voçê está apertando no lugar errado 😂','Vai, linda… o SIM está te esperando ♥']
+  atividades: [['🍽️','Restaurante'],['🚶','Caminhada'],['🎬','Cinema'],['🍻','Happy our'],['🎡','Parque'],['🕯️','Jantar caseiro'],],
+  provocacoes: ['Tem certeza, gatinha? 🥺','Pensa com carinho, meu bem…','-  com  -  é  +','Aparentemente você está apertando no lugar errado 😂','Vai, linda… o SIM está te esperando ♥','Tenho o dia inteiro pra esperar', 'Vai negar comida pro down? 🥺' ]
 };
 // Estado apenas em memória: atualizar a página reinicia o convite.
 const state = { step: 0, date: '', time: '18:00', food: '', activity: '', attempts: 0 };
@@ -24,8 +24,8 @@ function render(focus=true) {
   document.querySelector('body > #no')?.remove();
   document.querySelector('#counter').textContent = `0${state.step+1} / 06`;
   document.querySelector('#progress').innerHTML = Array.from({length:6},(_,i)=>`<span class="dot ${i===state.step?'active':''}" ${i===state.step?'aria-current="step"':''} aria-label="Etapa ${i+1}"></span>`).join('');
-  if(state.step===0) content.innerHTML = `<div class="seal" aria-hidden="true">♥</div>${heading('TENHO UMA PERGUNTINHA…','Que tal um encontro<br>com <em>você?</em>','Oi, gatinha. Separei um convite especial.<br>Você topa sair comigo?')}<div class="actions"><button class="button" data-next>Sim, eu topo! ♥</button><button class="button secondary" id="no">Não</button></div><p class="tease" id="tease" role="status">Pode escolher… se conseguir 🤭</p>`;
-  if(state.step===1) content.innerHTML = `<div class="seal" aria-hidden="true">💌</div>${heading('EU SABIA QUE IA ACEITAR','Você disse <em>sim!</em>','Eu estava super preparado para o não.<br>Mentira, já estava escolhendo a roupa. 🤭')}${next('Vamos organizar melhor?')}${back()}`;
+  if(state.step===0) content.innerHTML = `<div class="seal" aria-hidden="true">♥</div>${heading('TENHO UMA PERGUNTINHA…','Que tal um encontro<br><em>comigo?</em>','Oi, gatinha. <br>Você topa sair comigo?')}<div class="actions"><button class="button" data-next>Sim, eu topo! ♥</button><button class="button secondary" id="no">Não</button></div><p class="tease" id="tease" role="status">Pode escolher… se conseguir 🤭</p>`;
+  if(state.step===1) content.innerHTML = `<div class="seal" aria-hidden="true">💌</div>${heading('SABIA QUE VOCÊ QUERIA','Você disse <em>sim!</em>','Achava que não ia aceitar.<br>Mentira🤭')}${next('Vamos organizar melhor?')}${back()}`;
   if(state.step===2) content.innerHTML = `${heading('RESERVA:','Quando você<br>está <em>livre?</em>','Escolhe o dia e a hora, meu bem.<br>O resto deixa com o pae aqui😎.')}<form id="date-form"><div class="form"><label>O nosso dia<input id="date" type="date" required min="${localDate()}" value="${escapeHtml(state.date)}"></label><label>Melhor horário<input id="time" type="time" required value="${escapeHtml(state.time)}"></label></div><p class="error" id="date-error" role="alert"></p><button class="button wide" type="submit">Guardar essa data <span aria-hidden="true">→</span></button></form>${back()}`;
   if(state.step===3 || state.step===4) {
     const food = state.step===3, key=food?'food':'activity', options=food?CONFIG.comidas:CONFIG.atividades;
@@ -36,7 +36,7 @@ function render(focus=true) {
     const dateLabel = new Date(`${state.date}T12:00:00`).toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'});
     const message = `Encontro marcado! ♥\nDia: ${dateLabel}\nHorário: ${state.time}\nComida: ${state.food}\nPasseio: ${state.activity}\nTe espero! 🥰`;
     const link = /^https?:\/\//i.test(CONFIG.linkProssiga) ? CONFIG.linkProssiga : '';
-    content.innerHTML = heading('OFICIALMENTE COMBINADO','Tô contigo,<br><em>gatinha.</em>','Fica pronta que eu vou te buscar.<br>O melhor do encontro vai ser a companhia. ♥')+`<dl class="summary"><div><dt>📅 Nosso dia</dt><dd>${escapeHtml(dateLabel)}</dd></div><div><dt>🕒 Horário</dt><dd>${escapeHtml(state.time)}</dd></div><div><dt>🍽️ Pra comer</dt><dd>${escapeHtml(state.food)}</dd></div><div><dt>✨ Nosso passeio</dt><dd>${escapeHtml(state.activity)}</dd></div></dl><a class="button wide" href="https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(message)}" target="_blank" rel="noopener noreferrer">Confirmar no WhatsApp ↗</a><p class="hint">A mensagem vai prontinha. É só enviar por lá.</p><a class="continue-card" ${link?`href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer"`:'aria-disabled="true"'}><span><strong>Prossiga</strong><small>${link?'Tem mais um carinho esperando por você.':'Uma surpresa vem por aí…'}</small></span><span aria-hidden="true">↗</span></a>${back()}`;
+    content.innerHTML = heading('OFICIALMENTE COMBINADO','Tô contigo,<br><em>gatinha.</em>','Fica pronta que eu vou te buscar.<br>O melhor do encontro vai ser a companhia. ♥')+`<dl class="summary"><div><dt>📅 Nosso dia</dt><dd>${escapeHtml(dateLabel)}</dd></div><div><dt>🕒 Horário</dt><dd>${escapeHtml(state.time)}</dd></div><div><dt>🍽️ Pra comer</dt><dd>${escapeHtml(state.food)}</dd></div><div><dt>✨ Nosso passeio</dt><dd>${escapeHtml(state.activity)}</dd></div></dl><a class="button wide" href="https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(message)}" target="_blank" rel="noopener noreferrer">Confirmar no WhatsApp ↗</a><p class="hint">A mensagem vai prontinha. É só enviar por lá.</p><a class="continue-card" ${link?`href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer"`:'aria-disabled="true"'}><span><strong>Prossiga</strong><small>${link?'Ouça se arrumando...':'Uma surpresa vem por aí…'}</small></span><span aria-hidden="true">↗</span></a>${back()}`;
   }
   content.classList.remove('content-enter');void content.offsetWidth;content.classList.add('content-enter');
   content.querySelector('[data-next]')?.addEventListener('click',()=>{state.step++;render();});
